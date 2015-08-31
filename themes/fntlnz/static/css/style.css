@@ -46,9 +46,11 @@ table {
 /* Generic styles */
 body {
     font-family: "Times New Roman", Times, serif;
-    padding-left: 3em;
+    padding-left: 1.5em;
+    padding-right: 1.5em;
     padding-top: 0.5em;
-    width: 780px;
+    padding-bottom: 1em;
+    max-width: 780px;
 }
 
 a {
