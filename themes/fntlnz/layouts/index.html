@@ -1,10 +1,12 @@
 {{ partial "head.html" . }}
-<ul>
+
+<section>
     {{ range .Paginator.Pages }}
-    <li>
-        <a href='{{ .Permalink }}'><aside class="dates"></aside></a>
-        <a href='{{ .Permalink }}'>[{{ .Date.Format "Jan 2" }}] {{ .Title }} - {{ .Description | markdownify }}</a>
-    </li>
+    <section class="postExcerpt">
+        <header><h1><a href='{{ .Permalink }}'>{{ .Title }}</a></h1> <time>{{ .Date.Format "2 Jan 2006" }}</time></header>
+        <section>{{ .Description | markdownify }}</section>
+    </section>
     {{ end }}
-</ul>    
+</section>
+
 {{ partial "foot.html" . }}

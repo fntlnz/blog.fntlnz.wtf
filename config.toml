@@ -2,3 +2,4 @@ baseurl = "https://blog.fntlnz.wtf"
 languageCode = "en-us"
 title = "fntlnz's blog"
 theme = "fntlnz"
+paginate = 500

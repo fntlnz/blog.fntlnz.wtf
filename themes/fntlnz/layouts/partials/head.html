@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-        <link rel="stylesheet" href="{{ .Site.BaseURL }}/css/style.css">
+        <link rel="stylesheet" href="{{ .Site.BaseURL }}css/style.css">
         <link rel="alternate" type="application/rss+xml" title="RSS" href="{{ .Site.BaseURL }}/index.xml">
         <meta property="og:url" content="{{ .Site.BaseURL }}">
         {{ if eq .URL "/" }}
@@ -18,16 +18,10 @@
         {{ else }}
         <meta property="og:type" content="article">
         <meta property="og:title" content="{{ .Title }} &middot; {{ .Site.Title }}">
-        <title>
-            {{ if eq .URL "/" }}
-            {{ .Site.Title }}
-            {{ else if eq .URL "/post/" }}
-            All Entries &middot; {{ .Site.Title }}
-            {{ else if in .URL "/tags/" }}
-            {{ .Site.Title }}
-            {{ else }}
-            {{ .Title }}
-            {{ end }}
-        </title>
+        {{ end }}
+        <title>{{ if eq .URL "/" }}{{ .Site.Title }}{{ else if eq .URL "/post/" }}All Entries &middot; {{ .Site.Title }}{{ else if in .URL "/tags/" }}{{ .Site.Title }}{{ else }}{{ .Title }}{{ end }}</title>
     </head>
     <body>
+<header class="topBar">
+    <strong>fntlnz</strong>'s blog. Also on: <a href="https://github.com/fntlnz">GitHub</a>, <a href="http://twitter.com/fntlnz">Twitter</a>
+</header>

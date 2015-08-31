@@ -1,0 +1,103 @@
+/* Reset */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+    display: block;
+}
+body {
+    line-height: 1;
+}
+ol, ul {
+    list-style: none;
+}
+blockquote, q {
+    quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+    content: '';
+    content: none;
+}
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+/* Generic styles */
+body {
+    font-family: "Times New Roman", Times, serif;
+    padding-left: 3em;
+    padding-top: 0.5em;
+    width: 780px;
+}
+
+a {
+    color: black;
+    text-decoration: underline;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+strong { 
+    font-weight: bold;
+}
+
+header.topBar {
+    margin-bottom: 1em;
+}
+
+/* Index */
+section.postExcerpt {
+    margin-bottom: 1em;
+}
+
+section.postExcerpt header h1 {
+    display: inline; 
+    font-size: 25px;
+}
+
+section.postExcerpt header time {
+    font-style: italic;
+}
+
+section.postExcerpt header {
+    margin-bottom: 0.4em;
+}
+
+/* Single */
+
+article section#title h1 {
+    font-size: 25px;
+    margin-bottom: 0.2em;
+}
+
+article section#title time {
+    font-style: italic;
+}
+
+article section#title {
+    margin-top: 0.8em;
+    margin-bottom: 0.4em;
+}
