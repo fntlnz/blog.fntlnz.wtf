@@ -46,6 +46,7 @@ table {
 /* Generic styles */
 body {
     font-family: "Times New Roman", Times, serif;
+    font-size: 20px;
     padding-left: 1.5em;
     padding-right: 1.5em;
     padding-top: 0.5em;
@@ -91,7 +92,7 @@ section.postExcerpt header {
 /* Single */
 
 article section#title h1 {
-    font-size: 25px;
+    font-size: 30px;
     margin-bottom: 0.2em;
 }
 
@@ -102,4 +103,52 @@ article section#title time {
 article section#title {
     margin-top: 0.8em;
     margin-bottom: 0.4em;
+}
+
+article section#content {
+    margin-top: 0.8em;
+}
+
+article section#content ul, ol, p {
+    margin-top: 0.8em;
+}
+
+/* Quotes */
+blockquote {
+  background: #f9f9f9;
+  border-left: 10px solid #ccc;
+  margin: 1.5em 10px;
+  padding: 0.5em 10px;
+  quotes: "\201C""\201D""\2018""\2019";
+}
+blockquote:before {
+  color: #ccc;
+  content: open-quote;
+  font-size: 4em;
+  line-height: 0.1em;
+  margin-right: 0.07em;
+  vertical-align: -0.4em;
+}
+blockquote p {
+  display: inline;
+}
+
+/* Lists */
+ul {
+   list-style-type: disc;
+   list-style-position: inside;
+}
+ol {
+   list-style-type: decimal;
+   list-style-position: inside;
+}
+ul ul, ol ul {
+   list-style-type: circle;
+   list-style-position: inside;
+   margin-left: 15px;
+}
+ol ol, ul ol {
+   list-style-type: lower-latin;
+   list-style-position: inside;
+   margin-left: 15px;
 }
