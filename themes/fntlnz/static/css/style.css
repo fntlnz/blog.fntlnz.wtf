@@ -27,6 +27,9 @@ footer, header, hgroup, menu, nav, section {
 body {
     line-height: 1;
 }
+em {
+    font-style: italic;
+}
 ol, ul {
     list-style: none;
 }
@@ -92,7 +95,7 @@ section.postExcerpt header {
 /* Single */
 
 article section#title h1 {
-    font-size: 30px;
+    font-size: 35px;
     margin-bottom: 0.2em;
 }
 
@@ -110,6 +113,34 @@ article section#content {
 }
 
 article section#content ul, ol, p {
+    margin-top: 0.8em;
+}
+
+article section#content h1 {
+    font-weight: bold;
+    font-size: 30px;
+    margin-bottom: 0.4em;
+    margin-top: 0.8em;
+}
+
+article section#content h2 {
+    font-weight: bold;
+    font-size: 25px;
+    margin-bottom: 0.4em;
+    margin-top: 0.8em;
+}
+
+article section#content h3 {
+    font-weight: bold;
+    font-size: 23px;
+    margin-bottom: 0.4em;
+    margin-top: 0.8em;
+}
+
+article section#content h4 {
+    font-weight: bold;
+    font-size: 20px;
+    margin-bottom: 0.4em;
     margin-top: 0.8em;
 }
 
