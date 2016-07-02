@@ -48,7 +48,7 @@ table {
 
 /* Generic styles */
 body {
-    font-family: "Times New Roman", Times, serif;
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 20px;
     padding-left: 1.5em;
     padding-right: 1.5em;
@@ -72,6 +72,7 @@ strong {
 
 header.topBar {
     margin-bottom: 1em;
+    background-color: rgba(35, 57, 66, 0.11);
 }
 
 /* Index */
@@ -182,4 +183,12 @@ ol ol, ul ol {
    list-style-type: lower-latin;
    list-style-position: inside;
    margin-left: 15px;
+}
+
+pre {
+    display: block;
+    font-family: monospace;
+    white-space: pre;
+    margin: 1em 0;
+    padding: 5px;
 }

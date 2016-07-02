@@ -3,3 +3,6 @@ languageCode = "en-us"
 title = "fntlnz's blog"
 theme = "fntlnz"
 paginate = 500
+PygmentsCodeFences = true
+PygmentsOptions = "linenos=table"
+PygmentsStyle = "bw"
