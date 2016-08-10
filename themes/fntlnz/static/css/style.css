@@ -111,6 +111,7 @@ article section#title {
 
 article section#content {
     margin-top: 0.8em;
+    line-height: 1.4em;
 }
 
 article section#content ul, ol, p {
