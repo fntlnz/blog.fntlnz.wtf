@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on fntlnz&#39;s blog</title>
-    <link>https://blog.fntlnz.wtf/post/</link>
+    <link>http://blog.fntlnz.wtf/post/</link>
     <description>Recent content in Posts on fntlnz&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Thu, 11 Aug 2016 15:22:27 -0400</lastBuildDate>
-    <atom:link href="https://blog.fntlnz.wtf/post/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://blog.fntlnz.wtf/post/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Why do we have containers</title>
-      <link>https://blog.fntlnz.wtf/post/why-containers/</link>
+      <link>http://blog.fntlnz.wtf/post/why-containers/</link>
       <pubDate>Thu, 11 Aug 2016 15:22:27 -0400</pubDate>
       
-      <guid>https://blog.fntlnz.wtf/post/why-containers/</guid>
+      <guid>http://blog.fntlnz.wtf/post/why-containers/</guid>
       <description>
 
 &lt;h2 id=&#34;disclaimer&#34;&gt;Disclaimer&lt;/h2&gt;
@@ -54,7 +54,7 @@ primarily by analyzing the details of each virtualization method.&lt;/p&gt;
 
 &lt;p&gt;The most interesting one for the discussion is the last one but is important to understand that at some extent all types have two common denominators:&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://blog.fntlnz.wtf/why-containers/Virtualization.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://blog.fntlnz.wtf/why-containers/Virtualization.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 
 &lt;ul&gt;
 &lt;li&gt;A Host: the primary operating system where the Docker daemon is running, where KVM is running, where VMware is running&lt;/li&gt;
