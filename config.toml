@@ -7,3 +7,5 @@ PygmentsCodeFences = true
 PygmentsOptions = "linenos=table"
 PygmentsStyle = "bw"
 disqusShortname = "fntlnz"
+googleAnalytics = "UA-45983436-3"
+
