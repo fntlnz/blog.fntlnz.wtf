@@ -17,4 +17,4 @@ git commit -m "$msg"
 
 # Push source and build repos.
 git push origin master
-git subtree push --force --prefix=public git@github.com:fntlnz/blog.fntlnz.wtf.git gh-pages
+git subtree push --prefix=public git@github.com:fntlnz/blog.fntlnz.wtf.git gh-pages
