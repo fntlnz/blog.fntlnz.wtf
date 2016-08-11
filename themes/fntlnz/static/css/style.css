@@ -193,3 +193,7 @@ pre {
     margin: 1em 0;
     padding: 5px;
 }
+
+#disqus_thread {
+    margin-top: 4em;
+}

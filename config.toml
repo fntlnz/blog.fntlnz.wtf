@@ -6,3 +6,4 @@ paginate = 500
 PygmentsCodeFences = true
 PygmentsOptions = "linenos=table"
 PygmentsStyle = "bw"
+disqusShortname = "fntlnz"
