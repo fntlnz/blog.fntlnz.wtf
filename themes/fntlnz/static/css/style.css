@@ -83,6 +83,14 @@ header.topBar {
     background-color: rgba(35, 57, 66, 0.11);
 }
 
+.topBar > span.rss {
+  float: right;
+}
+
+.topBar > span.rss img {
+  width: 15px;
+}
+
 /* Index */
 section.postExcerpt {
     margin-bottom: 1em;
