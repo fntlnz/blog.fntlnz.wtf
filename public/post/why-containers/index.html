@@ -48,8 +48,8 @@ if you find something that you consider wrong or inexact leave a comment so I ca
 
 <h2 id="introduction">Introduction</h2>
 
-<p>As part of my work in Kiratech I evangelize people about <a href="https://en.wikipedia.org/wiki/Operating-system-level_virtualization">OS level Virtualization</a>
-and, while talking about Linux Containers, Docker Containers or more in general about the concept of containers itself I often (as it should be) encounter doubts and questions like:</p>
+<p>As part of my work at <a href="http://www.kiratech.it/">Kiratech</a> I evangelize people about <a href="https://en.wikipedia.org/wiki/Operating-system-level_virtualization">OS level Virtualization</a>
+and, while talking about Linux Containers, Docker Containers or more in general about the <strong>concept of containers itself</strong> I often (as it should be) encounter doubts and questions like:</p>
 
 <ul>
 <li>What is the actual difference between containers and other types of virtualization?</li>
@@ -63,7 +63,7 @@ and, while talking about Linux Containers, Docker Containers or more in general 
 <p>Why do we have containers ? What we had before was not enough?</p>
 </blockquote>
 
-<p>In this post I want to try to explain why, in my opinion, OS Level Virtualization implemented by containers is a thing that matters now
+<p>In this post I want to try to explain why, in my opinion, <strong>OS Level Virtualization</strong> (aka. containers) is a thing that matters now
 primarily by analyzing the details of each virtualization method.</p>
 
 <h2 id="different-types-of-virtualization">Different types of virtualization</h2>
@@ -96,8 +96,8 @@ as opposite, software load balancers can be installed on any hardware, are more 
 
 <ul>
 <li><strong>Security</strong>: Having a full operating system with its own kernel may seem a source of additional security because of the fact
-that is nearly impossible to escape from virtual machines. But if you consider the fact that you are putting a brand new kernel, with its vulnerabilities
-and bugs on top of your existing kernel you may change your point of view. On the other hand, OS-Level virtualization share the same kernel with the host operating system
+that is nearly impossible to escape from virtual machines. But if you consider the fact that you are putting a <strong>brand new kernel, with its vulnerabilities
+and bugs</strong> on top of your existing kernel you may change your point of view. On the other hand, OS-Level virtualization share the same kernel with the host operating system
 but comes with a larger surface for possible attackers due to the syscalls, shared networking, device and disk access. Anyway don&rsquo;t worry most of these security issues are
 solved in most used OS-Level virtualization platforms such as Docker, in fact Docker Containers for example are fully integrated with cgroups, seccomp, SELinux, and all the possible resources
 are isolated properly using Kernel namespaces, also you can manually add or drop capabilities.</li>
@@ -106,7 +106,7 @@ OS-Level virtualization which can be used anywhere a moderl Linux kernel is pres
 <li><strong>Speed</strong>: The fact that OS-Level virtualization works in a shared kernel architecture offers super fast startup times, this is not true for other types of virtualization
 where starting a new system is a lot more than just spawning a new process as it is with containers.</li>
 <li><strong>Application Portability</strong>: as because containers can be moved easily due to their decreased size due to the fact that they don&rsquo;t own an entire operating system and a kernel
-they can be moved like a breeze thus reduces downtimes and other headaches. For other types of virtualization this is not true, we all know that moving a virtual machine to another
+they can be moved like a breeze thus <strong>reduces downtimes and other headaches</strong>. For other types of virtualization this is not true, we all know that moving a virtual machine to another
 host requires lots of bandwidth and storage.</li>
 <li><strong>Storage</strong>: given that OS-Level virtualization implies the fact that the kernel is shared usually there&rsquo;s an implemented Copy on Write filesystem and Union Filesystem
 to put all the pieces toghether and obtain containers that only owns their code, components and libraries.</li>
@@ -117,8 +117,8 @@ other hand does not have an official implementation for this</li>
 <h2 id="motivations-for-using-containers">Motivations for using Containers</h2>
 
 <p>I can&rsquo;t know what is your intended use case.
-But if at some extent your motivation consist in decreasing costs related to full virtualization overheads
-while allowing developers to ship, develop and test code faster we already found two.</p>
+But if at some extent your motivation consist in <strong>decreasing costs</strong> related to full virtualization overheads
+while <strong>allowing developers to ship, develop and test code faster</strong> we already found two.</p>
 
 <h2 id="in-the-end-why-containers-are-actually-there">In the end, why containers are actually there?</h2>
 
@@ -127,9 +127,9 @@ OS-Level virtualization (aka containers) is just another way of doing virtualiza
 
 <p><strong>If you need a recap, here you go:</strong></p>
 
-<p>We need containers for being able to gain work closer to the kernel while staying in a fully isolated environment.
-This specific thing allows us to achieve higher densities and run more workload within the same hardware while
-obtaining faster delivery and scaling thanks to their nature of high portability.</p>
+<p>We need containers for being able to work closer to the kernel while executing in a fully isolated environment.
+This specific thing allows us to achieve <strong>higher densities</strong> and run more workload within the same hardware while
+obtaining <strong>faster delivery and scaling</strong> thanks to their nature of high portability.</p>
 </section>
 </article>
 
