@@ -57,6 +57,14 @@ body {
     max-width: 780px;
 }
 
+@media only screen and (max-device-width: 480px) {
+  body {
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    padding-top: 0.5em;
+  }
+}
+
 a {
     color: black;
     text-decoration: underline;
