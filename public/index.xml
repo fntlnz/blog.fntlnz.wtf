@@ -78,7 +78,7 @@ but comes with a larger surface for possible attackers due to the syscalls, shar
 solved in most used OS-Level virtualization platforms such as Docker, in fact Docker Containers for example are fully integrated with cgroups, seccomp, SELinux, and all the possible resources
 are isolated properly using Kernel namespaces, also you can manually add or drop capabilities.&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Portability&lt;/strong&gt;: Full virtualization and paravirtualization both leverages on specific hardware, because of its nature requires more resources than
-OS-Level virtualization which can be used anywhere a moderl Linux kernel is present.&lt;/li&gt;
+OS-Level virtualization which can be used anywhere a modern Linux kernel is present.&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Speed&lt;/strong&gt;: The fact that OS-Level virtualization works in a shared kernel architecture offers super fast startup times, this is not true for other types of virtualization
 where starting a new system is a lot more than just spawning a new process as it is with containers.&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Application Portability&lt;/strong&gt;: as because containers can be moved easily due to their decreased size due to the fact that they don&amp;rsquo;t own an entire operating system and a kernel
