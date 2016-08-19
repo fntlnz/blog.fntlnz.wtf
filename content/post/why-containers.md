@@ -68,7 +68,7 @@ OS-Level virtualization which can be used anywhere a modern Linux kernel is pres
 - **Speed**: The fact that OS-Level virtualization works in a shared kernel architecture offers super fast startup times, this is not true for other types of virtualization
 where starting a new system is a lot more than just spawning a new process as it is with containers.
 - **Application Portability**: as because containers can be moved easily due to their decreased size due to the fact that they don't own an entire operating system and a kernel
-they can be moved like a breeze thus **reduces downtimes and other headaches**. For other types of virtualization this is not true, we all know that moving a virtual machine to another
+we can obtain **reduced downtimes** and avoid headaches. For other types of virtualization this is not true, we all know that moving a virtual machine to another
 host requires lots of bandwidth and storage.
 - **Storage**: given that OS-Level virtualization implies the fact that the kernel is shared usually there's an implemented Copy on Write filesystem and Union Filesystem
 to put all the pieces toghether and obtain containers that only owns their code, components and libraries.
