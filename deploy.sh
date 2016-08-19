@@ -4,6 +4,7 @@ echo -e "\033[0;32mDeploying updates to GitHub...\033[0m"
 
 # Build the project.
 hugo -d docs
+echo "blog.fntlnz.wtf" > docs/CNAME
 
 # Add changes to git.
 git add -A
@@ -15,6 +16,5 @@ if [ $# -eq 1 ]
 fi
 git commit -m "$msg"
 
-echo "blog.fntlnz.wtf" > docs/CNAME
 # Push source and build repos.
 git push origin master
