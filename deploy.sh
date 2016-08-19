@@ -15,5 +15,6 @@ if [ $# -eq 1 ]
 fi
 git commit -m "$msg"
 
+echo "blog.fntlnz.wtf" > docs/CNAME
 # Push source and build repos.
 git push origin master
