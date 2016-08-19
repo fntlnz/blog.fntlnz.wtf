@@ -3,7 +3,7 @@
 echo -e "\033[0;32mDeploying updates to GitHub...\033[0m"
 
 # Build the project.
-hugo
+hugo -d docs
 
 # Add changes to git.
 git add -A
@@ -17,5 +17,3 @@ git commit -m "$msg"
 
 # Push source and build repos.
 git push origin master
-
-git push  git@github.com:fntlnz/blog.fntlnz.wtf.git `git subtree split --prefix=public --ignore-joins`:gh-pages --force
