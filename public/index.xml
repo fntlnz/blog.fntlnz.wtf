@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+      <title>fntlnz&#39;s blog</title>
+    <link>http://blog.fntlnz.wtf/</link>
+    <language>en-US</language>
+    <author>Lorenzo Fontana</author>
+    <updated>Thu, 11 Aug 2016 15:35:53 CEST</updated>
+    
+    <item>
+      <title>Why do we have containers</title>
+      <link>http://blog.fntlnz.wtf/post/why-containers/</link>
+      <pubDate>Thu, 11 Aug 2016 15:35:53 CEST</pubDate>
+      <author>Lorenzo Fontana</author>
+      <guid>http://blog.fntlnz.wtf/post/why-containers/</guid>
+      <description>
+
+&lt;h2 id=&#34;disclaimer&#34;&gt;Disclaimer&lt;/h2&gt;
+
+&lt;p&gt;This post reflects my own view of the whole world of virtualization, I summed up here my thoughts but please
+if you find something that you consider wrong or inexact leave a comment so I can learn by you and improve myself. 🤘🏼&lt;/p&gt;
+
+&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+
+&lt;p&gt;As part of my work at &lt;a href=&#34;http://www.kiratech.it/&#34;&gt;Kiratech&lt;/a&gt; I evangelize people about &lt;a href=&#34;https://en.wikipedia.org/wiki/Operating-system-level_virtualization&#34;&gt;OS level Virtualization&lt;/a&gt;
+and, while talking about Linux Containers, Docker Containers or more in general about the &lt;strong&gt;concept of containers itself&lt;/strong&gt; I often (as it should be) encounter doubts and questions like:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;What is the actual difference between containers and other types of virtualization?&lt;/li&gt;
+&lt;li&gt;How are containers going to make my life better?&lt;/li&gt;
+&lt;li&gt;What should I say to my security team while I&amp;rsquo;m using those containers?&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;All this can be summarized in a more simple question:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Why do we have containers ? What we had before was not enough?&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;In this post I want to try to explain why, in my opinion, &lt;strong&gt;OS Level Virtualization&lt;/strong&gt; (aka. containers) is a thing that matters now
+primarily by analyzing the details of each virtualization method.&lt;/p&gt;
+
+&lt;h2 id=&#34;different-types-of-virtualization&#34;&gt;Different types of virtualization&lt;/h2&gt;
+
+&lt;p&gt;At the moment there are three main distinct types of Virtualization, namely:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Full Virtualization&lt;/li&gt;
+&lt;li&gt;Paravirtualization&lt;/li&gt;
+&lt;li&gt;OS Level Virtualization (Containers)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The most interesting one for the discussion is the last one but is important to understand that at some extent all types have two common denominators:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.fntlnz.wtf/why-containers/Virtualization.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;A Host: the primary operating system where the Docker daemon is running, where KVM is running, where VMware is running&lt;/li&gt;
+&lt;li&gt;A Guest: the actual container or virtual machine&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The main difference between all those types of virtualization is the level at which them interact with the underlying resources and devices
+thus is responsible for their difference in terms of security, resources usage and portability.&lt;/p&gt;
+
+&lt;p&gt;This discussion can be easily understood in the context of load balancers where there two types of them: Hardware and software load balancers,
+both do load balancing and while the hardware version typically provides improved performances this comes at the cost of another specific piece of hardware with the limitations of the case.
+as opposite, software load balancers can be installed on any hardware, are more portable, customizable and probably fits better specific needs.&lt;/p&gt;
+
+&lt;p&gt;Given all this, there are a few areas of differentiation between all the different types of virtualization:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Security&lt;/strong&gt;: Having a full operating system with its own kernel may seem a source of additional security because of the fact
+that is nearly impossible to escape from virtual machines. But if you consider the fact that you are putting a &lt;strong&gt;brand new kernel, with its vulnerabilities
+and bugs&lt;/strong&gt; on top of your existing kernel you may change your point of view. On the other hand, OS-Level virtualization share the same kernel with the host operating system
+but comes with a larger surface for possible attackers due to the syscalls, shared networking, device and disk access. Anyway don&amp;rsquo;t worry most of these security issues are
+solved in most used OS-Level virtualization platforms such as Docker, in fact Docker Containers for example are fully integrated with cgroups, seccomp, SELinux, and all the possible resources
+are isolated properly using Kernel namespaces, also you can manually add or drop capabilities.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Portability&lt;/strong&gt;: Full virtualization and paravirtualization both leverages on specific hardware, because of its nature requires more resources than
+OS-Level virtualization which can be used anywhere a modern Linux kernel is present.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Speed&lt;/strong&gt;: The fact that OS-Level virtualization works in a shared kernel architecture offers super fast startup times, this is not true for other types of virtualization
+where starting a new system is a lot more than just spawning a new process as it is with containers.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Application Portability&lt;/strong&gt;: as because containers can be moved easily due to their decreased size due to the fact that they don&amp;rsquo;t own an entire operating system and a kernel
+we can obtain &lt;strong&gt;reduced downtimes&lt;/strong&gt; and avoid headaches. For other types of virtualization this is not true, we all know that moving a virtual machine to another
+host requires lots of bandwidth and storage.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Storage&lt;/strong&gt;: given that OS-Level virtualization implies the fact that the kernel is shared usually there&amp;rsquo;s an implemented Copy on Write filesystem and Union Filesystem
+to put all the pieces toghether and obtain containers that only owns their code, components and libraries.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Live Migration&lt;/strong&gt;: Some OS-Level virtualization platform such as OpenVZ does support live migrations, most Fill virtualization platforms supports it. Docker containers on the
+other hand does not have an official implementation for this&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;motivations-for-using-containers&#34;&gt;Motivations for using Containers&lt;/h2&gt;
+
+&lt;p&gt;I can&amp;rsquo;t know what is your intended use case.
+But if at some extent your motivation consist in &lt;strong&gt;decreasing costs&lt;/strong&gt; related to full virtualization overheads
+while &lt;strong&gt;allowing developers to ship, develop and test code faster&lt;/strong&gt; we already found two.&lt;/p&gt;
+
+&lt;h2 id=&#34;in-the-end-why-containers-are-actually-there&#34;&gt;In the end, why containers are actually there?&lt;/h2&gt;
+
+&lt;p&gt;If you&amp;rsquo;v read up to here you probably think I missed the point, instead what I wanted to write is exactly that
+OS-Level virtualization (aka containers) is just another way of doing virtualization which solves specific needs that are not solved by others:&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;If you need a recap, here you go:&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;We need containers for being able to work closer to the kernel while executing in a fully isolated environment.
+This specific thing allows us to achieve &lt;strong&gt;higher densities&lt;/strong&gt; and run more workload within the same hardware while
+obtaining &lt;strong&gt;faster delivery and scaling&lt;/strong&gt; thanks to their nature of high portability.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
