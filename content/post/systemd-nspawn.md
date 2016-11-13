@@ -1,80 +1,58 @@
 +++
 date        = "2016-11-11T01:38:22+02:00"
-title       = "Using systemd-nspawn for my laptop's containerization needs"
-description = "Personal considerations on using systemd-nspawn for a project and for applications in my laptop"
+title       = "Using systemd-nspawn for some containerization needs"
+description = "Personal considerations on using systemd-nspawn to save my laptop"
 tags        = [ "containers", "systemd", "systemd-nspawn" ]
 topics      = [ "containers", "systemd", "systemd-nspawn" ]
 slug        = "systemd-nspawn"
 +++
 
-## Why I started using `systemd-nspawn`
+# SCALETTA
 
-Anyone who knows me knows that I use containers for basically everything, starting from my
-own laptop up to production clusters counting gazillion of nodes.
-
-And, few weeks ago, while talking with some of my colleagues about a super secret product we are developing which needs to take advantage
-of typical containers' isolation features the focus obviously started thinking about Docker.
-
-*But, here comes the thing:*
-
-![cereals meme](/systemd-nspawn/cereals.png)
-
-I can't say much, but our product is a set of tiny tools which makes use of containers to do their tasks, but, by design, those tiny objects needs to be as small as possible and should have nearly zero dependencies upon external tools.
-
-So, at first, we put on the table the possibility to use [Runc](https://github.com/opencontainers/runc) instead of Docker and specifically we choose
-to embed [libcontainer](https://github.com/opencontainers/runc/tree/master/libcontainer) as a library in our code to create containers by our own.
-
-But, In the past few years I matured a special attention on systemd, so I started considering the possibility to use of this `systemd-nspawn` thing instead of libcontainer for our product.
-
-The first thing I did was to **conduct a few tests** based on my needs and here's a shortlist of my considerations:
-
-- `systemd-nspawn` perfectly fits my containerization needs of my project, I don't need a cluster, I don't need Windows or Solaris support, I don't need apparmor, I don't need an union filesystem.
-- AFAIK has been started [in 2011](https://github.com/systemd/systemd/blob/88213476187cafc86bea2276199891873000588d/src/nspawn.c), yes it was very basic at that time but, you know.
-- [Now](https://github.com/systemd/systemd/tree/7debb05dbe1f157e5f07c9bffa98fbe33e1b514e/src/nspawn) is a well structured project, with readable code and all the features I need: isolation, macvlan/ipvlan, cgroups, seccomp, capabilities
-- `systemd-nspawn`, I don't need a replacement for Docker, it has a plethora of things I need in the 99% of situations
-
-Said this, **I will not** use the `systemd-nspawn` command line tool in our project but rather **I will use it as a library** but this is another story, the prelude was just
-to give a motivation on why I started using `systemd-nspawn` for my laptop's containers after all.
+- Problema da risolvere
+- Docker perfetto per tutto ma lento e non voglio tutte le sue features isolation etch in tutte le situa
+- che cosa è systemd-nspawn
+- che cosa è machinectl
+- esempi e benchmark
+- conclusioni
 
 
-# What kind of laptop's containerization needs?
-When I say that I containerize all my laptop needs I mean that I just install my chosen OS, Fedora Workstation and as everyone on top of that I just install some applications I need
-to work, like a browser, neovim and spotify of course.
+About one year ago, after years with Fedora 18, I refreshed my laptop and installed a brand new Fedora 22.
+My first thought went to all the mess there was before the refresh, I tried tons of applications and changed my mind thousands of times
+in those three years.
 
-The fact is that I don't want to install any software on my laptop, I want to run a container instead and a possible solution to run my containers may be systemd-nspawn.
+After a few minutes thinking I had a light-bulb moment and I just started creating a Dockerfile for every application I needed.
 
-**WHAT'S NOT INCLUDED?**
+Well, after some time I had 27 images including:
 
-Obviously here we are only talking about the applications I use on my laptop, I still use Docker on my laptop when I write software that's shipped as containers, obviously.
+- google-chrome
+- spotify
+- dropbox
+- NetworkManager
+- pulseaudio
+- gnome-terminal-server
+- nautilus
+- feh
+- i3wm
+- lightdm
+- crond
+- VirtualBox
+- compton
+- parcellite
+- guake
+- and... many more!
 
+As you can imagine, I started each one with the right options allowing it to use the X server or the devices.
 
-**HEY!**: from now on I will show a few examples, Dockerfiles commands and other things I tested only on my Fedora Workstation 24, kernel 4.4 which has systemd.
-Don't expect for the examples to work out-of-the-box in your laptop, **they might or not**.
+In the next days I did some fine tuning and ended up having all the containers I listed starting at boot except for *google-chrome* and *nautilus*.
 
-At first we can start by takeing looking at the [runc example](https://github.com/opencontainers/runc#running-containers) to create an image.
-We can do the same thing for nspawn, so, to create a busybox container:
+What happened ?: My computer **took minutes** to **undefined time** to boot depending on the state of the Docker daemon, now, as you may understand that 
+was everything but desirable for me so I started thinking on what to do next.
 
-**nspawn version**
+The main problem for me wasn't that the Docker daemon itself is slow (in fact it's not) but a mix of factors due to the fact that Docker is a daemon and being a daemon it has its own list of checks/things to do at startup like setting up namespaces for existing containers, setting up volumes, managing and connecting to plugins, mounting the layered filesystems, setting up missing network devices and so on..
 
-```bash
-# create the top most bundle directory
-mkdir /mycontainer
-cd /mycontainer
+All this obviously slows down startup times in certain situations and given the fact that I use docker *a lot* for software development and for docker development itself there are a lot of possibilities that the state of my machine Docker daemon is pretty messy and things are likely to be broken and slow.
 
-# create the rootfs directory
-mkdir rootfs
-
-# export busybox via Docker into the rootfs directory
-docker export $(docker create busybox) | tar -C rootfs -xvf -
-```
-
-And then we can run it with `systemd-nspawn`
-
-```
-sudo systemd-nspawn -D rootfs/
-```
-
-Let's try something harder, here's **how I containerize spotify**, for example using nspawn.
 
 ## Starting a Spotify container using systemd-nspawn
 
@@ -141,20 +119,20 @@ Now that I have my image and I can use it with Docker seeing that it works I can
 The first thing to do is to export the docker image to a folder we'll call `rootfs`
 
 ```bash
-mkdir spotify-nspawn
-cd spotify-nspawn
+mkdir containers
+cd containers
 
-mkdir rootfs
-docker export $(docker create fntlnz/spotify) | tar -C rootfs -xvf -
+mkdir spotify
+docker export $(docker create fntlnz/spotify) | tar -C spotify -xvf -
 ```
 
 Then we have to give the right permissions to `/home/spotify`
 
 ```bash
-sudo systemd-nspawn -D rootfs/ bash -c "chown -R spotify:spotify /home/spotify"
+sudo systemd-nspawn -D spotify/ bash -c "chown -R spotify:spotify /home/spotify"
 ```
 
-So that we can start the container and join the sound: 
+Now each time we want to start that container we can do it with:
 
 ```bash
 sudo systemd-nspawn \
@@ -162,12 +140,21 @@ sudo systemd-nspawn \
 	--bind=/tmp/.X11-unix:/tmp/.X11-unix \
 	--bind /run/user/1000/pulse:/run/pulse \
 	--bind /var/lib/dbus:/var/lib/dbus \
-	--bind $HOME/.spotify/config:/home/spotify/.config/spotify \
-	--bind $HOME/.spotify/cache:/home/spotify/spotify \
-	-u spotify -D rootfs/ \
+	-u spotify -D spotify/ \
 	spotify
 ```
 
-And as because I'm using [i3](https://i3wm.org/) I just added that script to `/usr/local/bin/spotify` and here's the result (click to open the image)
+### Things to note:
 
-[![Spotify on systemd-nspawn](/systemd-nspawn/video.gif)](/systemd-nspawn/video.gif)
+- We haven't used any layered filesystem and the container is actually writing into the `spotify` directory.
+- The network stack is not isolated
+- The **1000** user id needs to be changed with the id of the user connected to the X session (your user id on that machine)
+
+
+
+
+
+# What I achieved ?
+
+- **Portability**: most linux distributions today are using systemd that means that my containers will work without having to install anything
+- **Faster startup times**: as I said, starting just a process is faster than setting up a Docker container, not because Docker is slow (it's not) but because it does actually more than just starting the process

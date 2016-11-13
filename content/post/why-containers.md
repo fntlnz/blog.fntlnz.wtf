@@ -8,13 +8,13 @@ slug        = "why-containers"
 +++
 
 
-## Disclaimer
+# Disclaimer
 
 This post reflects my own view of the whole world of virtualization, I summed up here my thoughts but please
-if you find something that you consider wrong or inexact leave a comment so I can learn by you and improve myself. 🤘🏼
+if you find something that you consider wrong or inexact leave a comment so I can learn by you and improve myself.
 
 
-## Introduction
+# Introduction
 
 As part of my work at [Kiratech](http://www.kiratech.it/) I evangelize people about [OS level Virtualization](https://en.wikipedia.org/wiki/Operating-system-level_virtualization)
 and, while talking about Linux Containers, Docker Containers or more in general about the **concept of containers itself** I often (as it should be) encounter doubts and questions like:
@@ -31,7 +31,7 @@ All this can be summarized in a more simple question:
 In this post I want to try to explain why, in my opinion, **OS Level Virtualization** (aka. containers) is a thing that matters now
 primarily by analyzing the details of each virtualization method.
 
-## Different types of virtualization
+# Different types of virtualization
 
 At the moment there are three main distinct types of Virtualization, namely:
 
@@ -64,7 +64,7 @@ but comes with a larger surface for possible attackers due to the syscalls, shar
 solved in most used OS-Level virtualization platforms such as Docker, in fact Docker Containers for example are fully integrated with cgroups, seccomp, SELinux, and all the possible resources
 are isolated properly using Kernel namespaces, also you can manually add or drop capabilities.
 - **Portability**: Full virtualization and paravirtualization both leverages on specific hardware, because of its nature requires more resources than
-OS-Level virtualization which can be used anywhere a modern Linux kernel is present.
+OS-Level virtuanchorlinenosalization which can be used anywhere a modern Linux kernel is present.
 - **Speed**: The fact that OS-Level virtualization works in a shared kernel architecture offers super fast startup times, this is not true for other types of virtualization
 where starting a new system is a lot more than just spawning a new process as it is with containers.
 - **Application Portability**: as because containers can be moved easily due to their decreased size due to the fact that they don't own an entire operating system and a kernel
@@ -83,12 +83,10 @@ But if at some extent your motivation consist in **decreasing costs** related to
 while **allowing developers to ship, develop and test code faster** we already found two.
 
 
-## In the end, why containers are actually there?
+# In the end, why containers are actually there?
 
 If you'v read up to here you probably think I missed the point, instead what I wanted to write is exactly that
 OS-Level virtualization (aka containers) is just another way of doing virtualization which solves specific needs that are not solved by others:
-
-**If you need a recap, here you go:**
 
 We need containers for being able to work closer to the kernel while executing in a fully isolated environment.
 This specific thing allows us to achieve **higher densities** and run more workload within the same hardware while

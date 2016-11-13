@@ -3,8 +3,13 @@
 <section>
     {{ range .Paginator.Pages }}
     <section class="postExcerpt">
-        <header><h1><a href='{{ .Permalink }}'>{{ .Title }}</a></h1> <time>{{ .Date.Format "2 Jan 2006" }}</time></header>
-        <section>{{ .Description | markdownify }}</section>
+        <h1><a href='{{ .Permalink }}'>{{ .Title }}</a></h1>
+      <time>{{ .Date.Format "Jan 2, 2006" }}</time>
+      <span class="middot"></span>
+      <span class="reading-time">{{ .ReadingTime }} minutes read</span>
+      <span class="middot"></span>
+      <span class="wordcount">{{ .FuzzyWordCount }} words</span>
+      <p>{{ .Description | markdownify }}</p>
     </section>
     {{ end }}
 </section>

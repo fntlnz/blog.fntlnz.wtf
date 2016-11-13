@@ -20,4 +20,4 @@ deploy: ## Deploy to GitHub Pages
 	git push origin master
 
 serve: ## Serve a local development copy
-	hugo serve
+	hugo serve --bind 0.0.0.0 --baseURL=192.168.0.102
