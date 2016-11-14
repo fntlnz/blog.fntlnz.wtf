@@ -60,12 +60,16 @@ body {
     padding-bottom: 1em;
     max-width: 780px;
     font-weight: 400;
-    font-family: 'Open Sans', 'Helvetica Neue', 'Arial', sans-serif;
+    font-family: "Lucida Grande","Lucida Sans Unicode","Lucida Sans",Geneva,Arial,sans-serif;
     color: #111111;
-    line-height: 1.3;
+    line-height: 1.58;
     text-rendering: optimizeLegibility !important;
     margin-left: auto;
     margin-right: auto;
+}
+
+h1 {
+    line-height: 1.10;
 }
 
 @media only screen and (max-device-width: 480px) {
@@ -104,7 +108,7 @@ header.topBar {
 
 /* Index */
 section.postExcerpt {
-    margin-bottom: 1em;
+    margin-bottom: 2em;
 }
 
 section.postExcerpt section {
@@ -113,6 +117,8 @@ section.postExcerpt section {
 
 section.postExcerpt h1 {
   font-size: 25px;
+  font-weight: 700;
+  margin-bottom: 0.3em;
 }
 
 
@@ -123,15 +129,12 @@ section.postExcerpt header {
 /* Single */
 
 article section#title h1 {
-    font-size: 30px;
-    margin-bottom: 0.2em;
+    font-size: 40px;
+    font-weight: 700;
+    letter-spacing: -.028em;
+    font-style: normal;
 }
 
-@media only screen and (max-device-width: 480px) {
-  article section#title h1 {
-      font-size: 25px;
-  }
-}
 section time {
     color: #666666;
 }
@@ -158,7 +161,7 @@ article section#title {
 article section#content {
     margin-top: 0.8em;
     line-height: 1.6em;
-    font-size: 1rem;
+    font-size: 20px;
     margin-bottom: 0.4em;
     margin-top: 0.8em;
 }
@@ -168,25 +171,37 @@ article section#content ul, ol, p {
 }
 
 article section#content h1 {
-    font-size: 25px;
+    font-size: 37px;
+    font-weight: 700;
+    letter-spacing: -.028em;
+    font-style: normal;
     margin-bottom: 0.4em;
     margin-top: 0.8em;
 }
 
 article section#content h2 {
-    font-size: 20px;
+    font-size: 34px;
+    font-weight: 700;
+    letter-spacing: -.028em;
+    font-style: normal;
     margin-bottom: 0.4em;
-    margin-top: 0.8em;
+    margin-top: 1.3em;
 }
 
 article section#content h3 {
-    font-size: 18px;
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -.028em;
+    font-style: normal;
     margin-bottom: 0.4em;
-    margin-top: 0.8em;
+    margin-top: 1em;
 }
 
 article section#content h4 {
-    font-size: 20px;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -.028em;
+    font-style: normal;
     margin-bottom: 0.4em;
     margin-top: 0.8em;
 }
@@ -216,7 +231,8 @@ blockquote p {
 /* Lists */
 ul {
     list-style-type: disc;
-    list-style-position: inside;
+    list-style-position: outside;
+    margin-left: 1em;
 }
 
 ol {
@@ -236,12 +252,17 @@ ol ol, ul ol {
     margin-left: 15px;
 }
 
+
 pre {
     display: block;
-    font-family: monospace;
-    white-space: pre;
+    font-size: 16px;
+    font-family: Menlo,Monaco,"Courier New",Courier,monospace;
+    white-space: pre-wrap;
+    overflow-x: auto;
     margin: 1em 0;
-    padding: 5px;
+    width: auto;
+    padding: 15px;
+    background: rgba(0,0,0,.05);
 }
 
 img {
@@ -258,3 +279,4 @@ hr {
   color: #666666;
   background-color: #666666;
 }
+
