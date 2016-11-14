@@ -4,7 +4,7 @@ title = "fntlnz's blog"
 theme = "fntlnz"
 paginate = 500
 PygmentsCodeFences = true
-PygmentsOptions = "linenos=table"
+PygmentsOptions = ""
 PygmentsStyle = "bw"
 disqusShortname = "fntlnz"
 googleAnalytics = "UA-45983436-3"

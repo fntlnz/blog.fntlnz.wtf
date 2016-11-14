@@ -1,8 +1,15 @@
 {{ partial "head.html" . }}
 &lharu; <a href="/">back to posts list</a>
 <article>
-    <section id="title"><h1>{{ .Title }}</h1> <time>{{ .Date.Format "2 Jan 2006" }}</time></section>
-    <section id="content">{{ .Content }}</section>
+  <section id="title">
+    <h1>{{ .Title }}</h1>
+    <time>{{ .Date.Format "Jan 2, 2006" }}</time>
+    <span class="middot"></span>
+    <span class="reading-time">{{ .ReadingTime }} minutes read</span>
+    <span class="middot"></span>
+    <span class="wordcount">{{ .FuzzyWordCount }} words</span>
+  </section>
+  <section id="content">{{ .Content }}</section>
 </article>
 
 {{ template "_internal/disqus.html" . }}

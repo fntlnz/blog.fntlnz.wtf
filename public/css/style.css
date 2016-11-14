@@ -1,0 +1,215 @@
+/* Reset */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+    display: block;
+}
+body {
+    line-height: 1;
+}
+em {
+    font-style: italic;
+}
+ol, ul {
+    list-style: none;
+}
+blockquote, q {
+    quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+    content: '';
+    content: none;
+}
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+/* Generic styles */
+body {
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 20px;
+    padding-left: 1.5em;
+    padding-right: 1.5em;
+    padding-top: 0.5em;
+    padding-bottom: 1em;
+    max-width: 780px;
+}
+
+@media only screen and (max-device-width: 480px) {
+  body {
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    padding-top: 0.5em;
+  }
+}
+
+a {
+    color: black;
+    text-decoration: underline;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+strong { 
+    font-weight: bold;
+}
+
+header.topBar {
+    margin-bottom: 1em;
+    background-color: rgba(35, 57, 66, 0.11);
+}
+
+.topBar > span.rss {
+  float: right;
+}
+
+.topBar > span.rss img {
+  width: 15px;
+}
+
+/* Index */
+section.postExcerpt {
+    margin-bottom: 1em;
+}
+
+section.postExcerpt header h1 {
+    display: inline; 
+    font-size: 25px;
+}
+
+section.postExcerpt header time {
+    font-style: italic;
+}
+
+section.postExcerpt header {
+    margin-bottom: 0.4em;
+}
+
+/* Single */
+
+article section#title h1 {
+    font-size: 35px;
+    margin-bottom: 0.2em;
+}
+
+article section#title time {
+    font-style: italic;
+}
+
+article section#title {
+    margin-top: 0.8em;
+    margin-bottom: 0.4em;
+}
+
+article section#content {
+    margin-top: 0.8em;
+    line-height: 1.4em;
+}
+
+article section#content ul, ol, p {
+    margin-top: 0.8em;
+}
+
+article section#content h1 {
+    font-weight: bold;
+    font-size: 30px;
+    margin-bottom: 0.4em;
+    margin-top: 0.8em;
+}
+
+article section#content h2 {
+    font-weight: bold;
+    font-size: 25px;
+    margin-bottom: 0.4em;
+    margin-top: 0.8em;
+}
+
+article section#content h3 {
+    font-weight: bold;
+    font-size: 23px;
+    margin-bottom: 0.4em;
+    margin-top: 0.8em;
+}
+
+article section#content h4 {
+    font-weight: bold;
+    font-size: 20px;
+    margin-bottom: 0.4em;
+    margin-top: 0.8em;
+}
+
+/* Quotes */
+blockquote {
+  background: #f9f9f9;
+  border-left: 10px solid #ccc;
+  margin: 1.5em 10px;
+  padding: 0.5em 10px;
+  quotes: "\201C""\201D""\2018""\2019";
+}
+blockquote:before {
+  color: #ccc;
+  content: open-quote;
+  font-size: 4em;
+  line-height: 0.1em;
+  margin-right: 0.07em;
+  vertical-align: -0.4em;
+}
+blockquote p {
+  display: inline;
+}
+
+/* Lists */
+ul {
+   list-style-type: disc;
+   list-style-position: inside;
+}
+ol {
+   list-style-type: decimal;
+   list-style-position: inside;
+}
+ul ul, ol ul {
+   list-style-type: circle;
+   list-style-position: inside;
+   margin-left: 15px;
+}
+ol ol, ul ol {
+   list-style-type: lower-latin;
+   list-style-position: inside;
+   margin-left: 15px;
+}
+
+pre {
+    display: block;
+    font-family: monospace;
+    white-space: pre;
+    margin: 1em 0;
+    padding: 5px;
+}
+
+#disqus_thread {
+    margin-top: 4em;
+}
