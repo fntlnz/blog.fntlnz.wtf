@@ -56,10 +56,13 @@ Oh, damn, **they only have a Debian package** :(
 
 ...Looking for possible solutions...
 
-So the first thing I did was in fact to create a Dockerfile for spotify.
+So the first thing I did was in fact to create **a Dockerfile for spotify.**
+
 
 **Q:** Wait Lorenzo, but **you've just said you are not using Docker** for your listening needs.
+
 **A**: In fact **I don't**, I'm just using Docker to create a Docker image, which I will export to a tar and use as a base filesystem for my container
+
 
 Here's the Dockerfile:
 

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+        <link rel="stylesheet" href="/css/style.css">
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="http://blog.fntlnz.wtf/index.xml">
+        <meta property="og:url" content="http://blog.fntlnz.wtf">
+        <link rel="apple-touch-icon" sizes="57x57" href="/favicon/apple-icon-57x57.png">
+        <link rel="apple-touch-icon" sizes="60x60" href="/favicon/apple-icon-60x60.png">
+        <link rel="apple-touch-icon" sizes="72x72" href="/favicon/apple-icon-72x72.png">
+        <link rel="apple-touch-icon" sizes="76x76" href="/favicon/apple-icon-76x76.png">
+        <link rel="apple-touch-icon" sizes="114x114" href="/favicon/apple-icon-114x114.png">
+        <link rel="apple-touch-icon" sizes="120x120" href="/favicon/apple-icon-120x120.png">
+        <link rel="apple-touch-icon" sizes="144x144" href="/favicon/apple-icon-144x144.png">
+        <link rel="apple-touch-icon" sizes="152x152" href="/favicon/apple-icon-152x152.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-icon-180x180.png">
+        <link rel="icon" type="image/png" sizes="192x192"  href="/favicon/android-icon-192x192.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="96x96" href="/favicon/favicon-96x96.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+        <link rel="manifest" href="/favicon/manifest.json">
+        <meta name="msapplication-TileColor" content="#ffffff">
+        <meta name="msapplication-TileImage" content="/favicon/ms-icon-144x144.png">
+        <meta name="theme-color" content="#ffffff">
+
+
+        
+        <meta property="og:type" content="article">
+        <meta property="og:title" content="Using systemd-nspawn for some containerization needs &middot; fntlnz&#39;s blog">
+        
+        <title>Using systemd-nspawn for some containerization needs</title>
+    </head>
+    <body>
+<header class="topBar">
+  <strong>fntlnz</strong></a>'s blog. <a  href="https://github.com/fntlnz">github</a>, <a href="http://twitter.com/fntlnz">twitter</a>
+  <span class="rss"><a href="/index.xml"><img src="/rss-icon.png" /></a></span>
+</header>
+
+&lharu; <a href="/">back to posts list</a>
+<article>
+  <section id="title">
+    <h1>Using systemd-nspawn for some containerization needs</h1>
+    <time>Nov 11, 2016</time>
+    <span class="middot"></span>
+    <span class="reading-time">6 minutes read</span>
+    <span class="middot"></span>
+    <span class="wordcount">1100 words</span>
+  </section>
+  <section id="content">
+
+<p>About one year ago, after years with Fedora 18, I refreshed my laptop and installed a brand new Fedora 22.
+My first thought went to all the mess there was before the refresh because I tried tons of applications and changed my mind thousands of times
+in those three years.</p>
+
+<p>This time, I wanted to take my time to <strong>improve the process</strong> and after a few minutes thinking I had a light-bulb moment and I just started creating <strong>a Dockerfile for every application</strong> I needed !</p>
+
+<p>Well, after some time I had 27 images including:</p>
+
+<ul>
+<li>google-chrome</li>
+<li>spotify</li>
+<li>dropbox</li>
+<li>NetworkManager</li>
+<li>pulseaudio</li>
+<li>gnome-terminal-server</li>
+<li>nautilus</li>
+<li>feh</li>
+<li>i3wm</li>
+<li>lightdm</li>
+<li>crond</li>
+<li>VirtualBox</li>
+<li>compton</li>
+<li>parcellite</li>
+<li>guake</li>
+<li>and&hellip; many more!</li>
+</ul>
+
+<p>As you can imagine, I started each one with the right options (<strong>I hope!</strong>) allowing it to use the X server and other resources.</p>
+
+<p>In the next days I did some fine tuning and ended up having most of the containers I listed starting as startup system services.</p>
+
+<h3 id="what-happened">What happened ?</h3>
+
+<p>My computer <strong>took minutes</strong> to <strong>undefined time</strong> to boot depending on the state of the Docker daemon, and that wasn&rsquo;t acceptable for me so, sad but full of hope I started thinking at a possible solution
+by identifying why Docker wasn&rsquo;t performing well as I expected in such situation.</p>
+
+<p>The main problem, wasn&rsquo;t that the Docker daemon itself is slow (in fact it isn&rsquo;t) but a mix of factors due to the intrinsic docker&rsquo;s caracteristic that <strong>it wants to manage</strong> everything for you, like setting up namespaces for existing containers, setting up volumes, managing and connecting to plugins, mounting the layered filesystems, setting up missing network devices and so on..</p>
+
+<p>All this obviously slows down startup times in certain situations and given the fact that I use docker <em>a lot</em> for software development and for docker development itself there are a lot of ways that the state of my machine Docker daemon is pretty messy and things are likely to be broken and slow.</p>
+
+<h1 id="example-container-spotify">Example container: Spotify</h1>
+
+<p>Let&rsquo;s say that I need to listen to some music and I&rsquo;m on Fedora (looks like me now :D)</p>
+
+<p>I Google for the Spotify Linux client aaaaand that&rsquo;s IT! Spotify does have a Linux client, great!</p>
+
+<p>Oh, damn, <strong>they only have a Debian package</strong> :(</p>
+
+<p>&hellip;Looking for possible solutions&hellip;</p>
+
+<p>So the first thing I did was in fact to create <strong>a Dockerfile for spotify.</strong></p>
+
+<p><strong>Q:</strong> Wait Lorenzo, but <strong>you&rsquo;ve just said you are not using Docker</strong> for your listening needs.</p>
+
+<p><strong>A</strong>: In fact <strong>I don&rsquo;t</strong>, I&rsquo;m just using Docker to create a Docker image, which I will export to a tar and use as a base filesystem for my container</p>
+
+<p>Here&rsquo;s the Dockerfile:</p>
+<div class="highlight" style="background: #ffffff"><pre style="line-height: 125%"><span></span><span style="font-weight: bold">FROM</span><span style="font-style: italic"> debian:jessie</span>
+
+<span style="font-weight: bold">RUN</span> apt-get update -y
+<span style="font-weight: bold">RUN</span> gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys BBEBDCB318AD50EC6865090613B00F1FD2C19886
+<span style="font-weight: bold">RUN</span> gpg --export --armor BBEBDCB318AD50EC6865090613B00F1FD2C19886 | apt-key add -
+<span style="font-weight: bold">RUN</span> echo deb http://repository.spotify.com stable non-free | tee /etc/apt/sources.list.d/spotify.list
+<span style="font-weight: bold">RUN</span> apt-get update -y
+<span style="font-weight: bold">RUN</span> apt-get install spotify-client -y
+<span style="font-weight: bold">RUN</span> apt-get install pulseaudio -y
+<span style="font-weight: bold">RUN</span> apt-get install -f -y
+<span style="font-weight: bold">RUN</span> echo enable-shm=no &gt;&gt; /etc/pulse/client.conf
+
+<span style="font-weight: bold">ENV</span><span style="font-style: italic"> PULSE_SERVER /run/pulse/native</span>
+<span style="font-weight: bold">ENV</span><span style="font-style: italic"> HOME /home/spotify</span>
+
+<span style="font-weight: bold">RUN</span> useradd --create-home --home-dir $HOME spotify <span style="font-weight: bold; font-style: italic">\</span>
+  &amp;&amp; gpasswd -a spotify audio <span style="font-weight: bold; font-style: italic">\</span>
+  &amp;&amp; chown -R spotify:spotify $HOME
+
+  WORKDIR $HOME
+  USER spotify
+  ENTRYPOINT  [ <span style="font-style: italic">&quot;spotify&quot;</span> ]
+</pre></div>
+
+<p>After building it with name <code>fntlnz/spotify</code> it can be run in Docker with:</p>
+<div class="highlight" style="background: #ffffff"><pre style="line-height: 125%"><span></span><span style="font-style: italic"># docker run -d \</span>
+  -v /etc/localtime:/etc/localtime:ro <span style="font-weight: bold; font-style: italic">\</span>
+  -v /tmp/.X11-unix:/tmp/.X11-unix <span style="font-weight: bold; font-style: italic">\</span>
+  -e DISPLAY=unix$DISPLAY <span style="font-weight: bold; font-style: italic">\</span>
+  -v /run/user/1000/pulse:/run/pulse:ro <span style="font-weight: bold; font-style: italic">\</span>
+  -v /var/lib/dbus:/var/lib/dbus <span style="font-weight: bold; font-style: italic">\</span>
+  -v $HOME/.spotify/config:/home/spotify/.config/spotify <span style="font-weight: bold; font-style: italic">\</span>
+  -v $HOME/.spotify/cache:/home/spotify/spotify <span style="font-weight: bold; font-style: italic">\</span>
+  --name spotify <span style="font-weight: bold; font-style: italic">\</span>
+  fntlnz/spotify
+</pre></div>
+
+<p>Now that I have my image and I can use it with Docker seeing that it works I can try it with <code>systemd-nspawn</code></p>
+
+<p>The first thing to do is to export the docker image to a folder we&rsquo;ll call <code>rootfs</code></p>
+<div class="highlight" style="background: #ffffff"><pre style="line-height: 125%"><span></span><span style="font-style: italic"># mkdir -p /var/lib/machines</span>
+<span style="font-style: italic"># cd /var/lib/machines</span>
+
+<span style="font-style: italic"># mkdir spotify</span>
+<span style="font-style: italic"># docker export $(docker create fntlnz/spotify) | tar -C spotify -xvf -</span>
+</pre></div>
+
+<p>Then we have to give the right permissions to <code>/home/spotify</code></p>
+<div class="highlight" style="background: #ffffff"><pre style="line-height: 125%"><span></span><span style="font-style: italic"># systemd-nspawn -D spotify/ bash -c &quot;chown -R spotify:spotify /home/spotify&quot;</span>
+</pre></div>
+
+<p>Now each time we want to start that container we can do it with:</p>
+<div class="highlight" style="background: #ffffff"><pre style="line-height: 125%"><span></span><span style="font-style: italic"># systemd-nspawn \</span>
+  --setenv=DISPLAY=unix$DISPLAY <span style="font-weight: bold; font-style: italic">\</span>
+  --bind=/tmp/.X11-unix:/tmp/.X11-unix <span style="font-weight: bold; font-style: italic">\</span>
+  --bind /run/user/1000/pulse:/run/pulse <span style="font-weight: bold; font-style: italic">\</span>
+  --bind /var/lib/dbus:/var/lib/dbus <span style="font-weight: bold; font-style: italic">\</span>
+  -u spotify -D spotify/ <span style="font-weight: bold; font-style: italic">\</span>
+  spotify
+</pre></div>
+
+<h3 id="things-to-note">Things to note:</h3>
+
+<ul>
+<li>We haven&rsquo;t used any layered filesystem and the container is actually writing into the <code>spotify</code> directory.</li>
+<li>The network stack is not isolated</li>
+<li>The <strong>1000</strong> user id needs to be changed with the id of the user connected to the X session (your user id on that machine)</li>
+<li>I&rsquo;m not mounting <code>$HOME/.spotify</code> things inside my <code>systemd-nspawn</code> container since I decided to keep the state in the <code>spotify</code> directory</li>
+</ul>
+
+<h1 id="machinectl">machinectl</h1>
+
+<p>There&rsquo;s another tool, invokable via <code>machinectl</code> which allows you to manage your &ldquo;machines&rdquo; aka containers and vms managed
+by the <a href="https://wiki.freedesktop.org/www/Software/systemd/machined/"><strong>systemd machine manager</strong></a></p>
+
+<h4 id="container-services">Container services</h4>
+
+<p>Using machinectl you can even create startup services, for example I use this for the NetworkManagr (image not included)</p>
+<div class="highlight" style="background: #ffffff"><pre style="line-height: 125%"><span></span><span style="font-style: italic"># machinectl enable network-manager</span>
+
+Created symlink from /etc/systemd/system/machines.target.wants/systemd-nspawn@network-manager.service to /usr/lib/systemd/system/systemd-nspawn@.service.
+</pre></div>
+
+<h4 id="management">Management</h4>
+
+<p>machinectl allows you to list, terminate and show the status of machines.</p>
+<div class="highlight" style="background: #ffffff"><pre style="line-height: 125%"><span></span><span style="font-style: italic"># machinectl list</span>
+
+
+MACHINE CLASS     SERVICE
+spotify container nspawn 
+
+1 machines listed.
+</pre></div>
+<div class="highlight" style="background: #ffffff"><pre style="line-height: 125%"><span></span><span style="font-style: italic"># machinectl terminate spotify</span>
+</pre></div>
+<div class="highlight" style="background: #ffffff"><pre style="line-height: 125%"><span></span><span style="font-style: italic"># machinectl status spotify</span>
+
+spotify
+           Since: Mon 2016-11-14 02:13:54 CET; 7s ago
+          Leader: 11308 (spotify)
+         Service: nspawn; class container
+            Root: /var/lib/machines/spotify
+              OS: Debian GNU/Linux 8 (jessie)
+            Unit: machine-spotify.scope
+                  ├─11308 /usr/share/spotify/spotif
+                  ├─11321 /usr/share/spotify/spotify --type=zygote --no-sandbox --lang=en-US --log-file=/usr/share/spotify/debug.log --log-severity=disable --product-version=Spotify/1.0.42.151
+                  ├─11344 /proc/self/exe --type=gpu-process --channel=1.0.1413324922 --mojo-application-channel-token=7BA7725BB9581D934FDAECBCAC0E2C8B --no-sandbox --window-depth=24 --x11-visual-id=32 --lang=en-
+                  └─11372 /usr/share/spotify/spotify --type=renderer --disable-pinch --no-sandbox --primordial-pipe-token=431AFC3F7268B33A8765213F7926A54A --lang=en-US --lang=en-US --log-file=/usr/share/spotify/
+
+Nov 14 02:13:54 fntlnz systemd[1]: Started Container spotify.
+Nov 14 02:13:54 fntlnz systemd[1]: Starting Container spotify.
+</pre></div>
+
+<h4 id="pull-images">Pull images</h4>
+
+<p>machinectl can pull images using <code>pull-raw</code>, <code>pull-tar</code> and <code>pull-dkr</code> from remote urls.</p>
+
+<pre><code># machinectl pull-raw --verify=no http://ftp.halifax.rwth-aachen.de/fedora/linux/releases/21/Cloud/Images/x86_64/Fedora-Cloud-Base-20141203-21.x86_64.raw.xz
+# systemd-nspawn -M Fedora-Cloud-Base-20141203-21
+</code></pre>
+
+<p>for more, see <a href="https://www.freedesktop.org/software/systemd/man/machinectl.html">machinectl</a></p>
+
+<h2 id="what-s-next">What&rsquo;s next</h2>
+
+<p>In this post I showed you something like the top 1% of the things that can be done with <code>systemd-nspawn</code>, there&rsquo;s <strong>moar!!</strong>, like:</p>
+
+<ul>
+<li>Usage of btrfs as container root and ephemeral containers</li>
+<li>Network isolation and advanced network interfaces (macvlan, ipvlan)</li>
+<li>Integration with SELinux</li>
+<li>bootable images</li>
+</ul>
+
+<p>see <code>man machinectl</code> and <code>man systemd-nspawn</code> for more</p>
+
+<h1 id="what-i-achieved">What I achieved ?</h1>
+
+<ul>
+<li><strong>Portability and zero setup time</strong>: most linux distributions today are using systemd that means that my containers will work without having to install anything</li>
+<li><strong>Faster startup times</strong>: as I said, starting just a process is faster than setting up a Docker container, not because Docker is slow (it&rsquo;s not) but because it does actually more than just starting the process</li>
+<li><strong>Reuse</strong>: I can reuse any docker image I want just by exporting it to a tar file, I can even reuse virtual machine images.</li>
+</ul>
+
+<p>Now let&rsquo;s listen at some music!</p>
+
+<p><img src="/systemd-nspawn/video.gif" alt="systemd nspawn spotify" /></p>
+</section>
+</article>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'fntlnz';
+    var disqus_identifier = 'http:\/\/blog.fntlnz.wtf\/post\/systemd-nspawn\/';
+    var disqus_title = 'Using systemd-nspawn for some containerization needs';
+    var disqus_url = 'http:\/\/blog.fntlnz.wtf\/post\/systemd-nspawn\/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-45983436-3', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+
+</body>
+</html>
+

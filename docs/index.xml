@@ -1,28 +1,242 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>fntlnz&#39;s blog</title>
+      <title>fntlnz&#39;s blog</title>
     <link>http://blog.fntlnz.wtf/</link>
-    <description>Recent content on fntlnz&#39;s blog</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <lastBuildDate>Thu, 11 Aug 2016 15:35:53 +0200</lastBuildDate>
-    <atom:link href="http://blog.fntlnz.wtf/index.xml" rel="self" type="application/rss+xml" />
+    <language>en-US</language>
+    <author>Lorenzo Fontana</author>
+    <updated>Fri, 11 Nov 2016 01:38:22 &#43;0200</updated>
+    
+    <item>
+      <title>Using systemd-nspawn for some containerization needs</title>
+      <link>http://blog.fntlnz.wtf/post/systemd-nspawn/</link>
+      <pubDate>Fri, 11 Nov 2016 01:38:22 &#43;0200</pubDate>
+      <author>Lorenzo Fontana</author>
+      <guid>http://blog.fntlnz.wtf/post/systemd-nspawn/</guid>
+      <description>
+
+&lt;p&gt;About one year ago, after years with Fedora 18, I refreshed my laptop and installed a brand new Fedora 22.
+My first thought went to all the mess there was before the refresh because I tried tons of applications and changed my mind thousands of times
+in those three years.&lt;/p&gt;
+
+&lt;p&gt;This time, I wanted to take my time to &lt;strong&gt;improve the process&lt;/strong&gt; and after a few minutes thinking I had a light-bulb moment and I just started creating &lt;strong&gt;a Dockerfile for every application&lt;/strong&gt; I needed !&lt;/p&gt;
+
+&lt;p&gt;Well, after some time I had 27 images including:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;google-chrome&lt;/li&gt;
+&lt;li&gt;spotify&lt;/li&gt;
+&lt;li&gt;dropbox&lt;/li&gt;
+&lt;li&gt;NetworkManager&lt;/li&gt;
+&lt;li&gt;pulseaudio&lt;/li&gt;
+&lt;li&gt;gnome-terminal-server&lt;/li&gt;
+&lt;li&gt;nautilus&lt;/li&gt;
+&lt;li&gt;feh&lt;/li&gt;
+&lt;li&gt;i3wm&lt;/li&gt;
+&lt;li&gt;lightdm&lt;/li&gt;
+&lt;li&gt;crond&lt;/li&gt;
+&lt;li&gt;VirtualBox&lt;/li&gt;
+&lt;li&gt;compton&lt;/li&gt;
+&lt;li&gt;parcellite&lt;/li&gt;
+&lt;li&gt;guake&lt;/li&gt;
+&lt;li&gt;and&amp;hellip; many more!&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;As you can imagine, I started each one with the right options (&lt;strong&gt;I hope!&lt;/strong&gt;) allowing it to use the X server and other resources.&lt;/p&gt;
+
+&lt;p&gt;In the next days I did some fine tuning and ended up having most of the containers I listed starting as startup system services.&lt;/p&gt;
+
+&lt;h3 id=&#34;what-happened&#34;&gt;What happened ?&lt;/h3&gt;
+
+&lt;p&gt;My computer &lt;strong&gt;took minutes&lt;/strong&gt; to &lt;strong&gt;undefined time&lt;/strong&gt; to boot depending on the state of the Docker daemon, and that wasn&amp;rsquo;t acceptable for me so, sad but full of hope I started thinking at a possible solution
+by identifying why Docker wasn&amp;rsquo;t performing well as I expected in such situation.&lt;/p&gt;
+
+&lt;p&gt;The main problem, wasn&amp;rsquo;t that the Docker daemon itself is slow (in fact it isn&amp;rsquo;t) but a mix of factors due to the intrinsic docker&amp;rsquo;s caracteristic that &lt;strong&gt;it wants to manage&lt;/strong&gt; everything for you, like setting up namespaces for existing containers, setting up volumes, managing and connecting to plugins, mounting the layered filesystems, setting up missing network devices and so on..&lt;/p&gt;
+
+&lt;p&gt;All this obviously slows down startup times in certain situations and given the fact that I use docker &lt;em&gt;a lot&lt;/em&gt; for software development and for docker development itself there are a lot of ways that the state of my machine Docker daemon is pretty messy and things are likely to be broken and slow.&lt;/p&gt;
+
+&lt;h1 id=&#34;example-container-spotify&#34;&gt;Example container: Spotify&lt;/h1&gt;
+
+&lt;p&gt;Let&amp;rsquo;s say that I need to listen to some music and I&amp;rsquo;m on Fedora (looks like me now :D)&lt;/p&gt;
+
+&lt;p&gt;I Google for the Spotify Linux client aaaaand that&amp;rsquo;s IT! Spotify does have a Linux client, great!&lt;/p&gt;
+
+&lt;p&gt;Oh, damn, &lt;strong&gt;they only have a Debian package&lt;/strong&gt; :(&lt;/p&gt;
+
+&lt;p&gt;&amp;hellip;Looking for possible solutions&amp;hellip;&lt;/p&gt;
+
+&lt;p&gt;So the first thing I did was in fact to create &lt;strong&gt;a Dockerfile for spotify.&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Q:&lt;/strong&gt; Wait Lorenzo, but &lt;strong&gt;you&amp;rsquo;ve just said you are not using Docker&lt;/strong&gt; for your listening needs.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;A&lt;/strong&gt;: In fact &lt;strong&gt;I don&amp;rsquo;t&lt;/strong&gt;, I&amp;rsquo;m just using Docker to create a Docker image, which I will export to a tar and use as a base filesystem for my container&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s the Dockerfile:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #ffffff&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;font-weight: bold&#34;&gt;FROM&lt;/span&gt;&lt;span style=&#34;font-style: italic&#34;&gt; debian:jessie&lt;/span&gt;
+
+&lt;span style=&#34;font-weight: bold&#34;&gt;RUN&lt;/span&gt; apt-get update -y
+&lt;span style=&#34;font-weight: bold&#34;&gt;RUN&lt;/span&gt; gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys BBEBDCB318AD50EC6865090613B00F1FD2C19886
+&lt;span style=&#34;font-weight: bold&#34;&gt;RUN&lt;/span&gt; gpg --export --armor BBEBDCB318AD50EC6865090613B00F1FD2C19886 | apt-key add -
+&lt;span style=&#34;font-weight: bold&#34;&gt;RUN&lt;/span&gt; echo deb http://repository.spotify.com stable non-free | tee /etc/apt/sources.list.d/spotify.list
+&lt;span style=&#34;font-weight: bold&#34;&gt;RUN&lt;/span&gt; apt-get update -y
+&lt;span style=&#34;font-weight: bold&#34;&gt;RUN&lt;/span&gt; apt-get install spotify-client -y
+&lt;span style=&#34;font-weight: bold&#34;&gt;RUN&lt;/span&gt; apt-get install pulseaudio -y
+&lt;span style=&#34;font-weight: bold&#34;&gt;RUN&lt;/span&gt; apt-get install -f -y
+&lt;span style=&#34;font-weight: bold&#34;&gt;RUN&lt;/span&gt; echo enable-shm=no &amp;gt;&amp;gt; /etc/pulse/client.conf
+
+&lt;span style=&#34;font-weight: bold&#34;&gt;ENV&lt;/span&gt;&lt;span style=&#34;font-style: italic&#34;&gt; PULSE_SERVER /run/pulse/native&lt;/span&gt;
+&lt;span style=&#34;font-weight: bold&#34;&gt;ENV&lt;/span&gt;&lt;span style=&#34;font-style: italic&#34;&gt; HOME /home/spotify&lt;/span&gt;
+
+&lt;span style=&#34;font-weight: bold&#34;&gt;RUN&lt;/span&gt; useradd --create-home --home-dir $HOME spotify &lt;span style=&#34;font-weight: bold; font-style: italic&#34;&gt;\&lt;/span&gt;
+  &amp;amp;&amp;amp; gpasswd -a spotify audio &lt;span style=&#34;font-weight: bold; font-style: italic&#34;&gt;\&lt;/span&gt;
+  &amp;amp;&amp;amp; chown -R spotify:spotify $HOME
+
+  WORKDIR $HOME
+  USER spotify
+  ENTRYPOINT  [ &lt;span style=&#34;font-style: italic&#34;&gt;&amp;quot;spotify&amp;quot;&lt;/span&gt; ]
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;After building it with name &lt;code&gt;fntlnz/spotify&lt;/code&gt; it can be run in Docker with:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #ffffff&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;font-style: italic&#34;&gt;# docker run -d \&lt;/span&gt;
+  -v /etc/localtime:/etc/localtime:ro &lt;span style=&#34;font-weight: bold; font-style: italic&#34;&gt;\&lt;/span&gt;
+  -v /tmp/.X11-unix:/tmp/.X11-unix &lt;span style=&#34;font-weight: bold; font-style: italic&#34;&gt;\&lt;/span&gt;
+  -e DISPLAY=unix$DISPLAY &lt;span style=&#34;font-weight: bold; font-style: italic&#34;&gt;\&lt;/span&gt;
+  -v /run/user/1000/pulse:/run/pulse:ro &lt;span style=&#34;font-weight: bold; font-style: italic&#34;&gt;\&lt;/span&gt;
+  -v /var/lib/dbus:/var/lib/dbus &lt;span style=&#34;font-weight: bold; font-style: italic&#34;&gt;\&lt;/span&gt;
+  -v $HOME/.spotify/config:/home/spotify/.config/spotify &lt;span style=&#34;font-weight: bold; font-style: italic&#34;&gt;\&lt;/span&gt;
+  -v $HOME/.spotify/cache:/home/spotify/spotify &lt;span style=&#34;font-weight: bold; font-style: italic&#34;&gt;\&lt;/span&gt;
+  --name spotify &lt;span style=&#34;font-weight: bold; font-style: italic&#34;&gt;\&lt;/span&gt;
+  fntlnz/spotify
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Now that I have my image and I can use it with Docker seeing that it works I can try it with &lt;code&gt;systemd-nspawn&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;The first thing to do is to export the docker image to a folder we&amp;rsquo;ll call &lt;code&gt;rootfs&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #ffffff&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;font-style: italic&#34;&gt;# mkdir -p /var/lib/machines&lt;/span&gt;
+&lt;span style=&#34;font-style: italic&#34;&gt;# cd /var/lib/machines&lt;/span&gt;
+
+&lt;span style=&#34;font-style: italic&#34;&gt;# mkdir spotify&lt;/span&gt;
+&lt;span style=&#34;font-style: italic&#34;&gt;# docker export $(docker create fntlnz/spotify) | tar -C spotify -xvf -&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Then we have to give the right permissions to &lt;code&gt;/home/spotify&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #ffffff&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;font-style: italic&#34;&gt;# systemd-nspawn -D spotify/ bash -c &amp;quot;chown -R spotify:spotify /home/spotify&amp;quot;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Now each time we want to start that container we can do it with:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #ffffff&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;font-style: italic&#34;&gt;# systemd-nspawn \&lt;/span&gt;
+  --setenv=DISPLAY=unix$DISPLAY &lt;span style=&#34;font-weight: bold; font-style: italic&#34;&gt;\&lt;/span&gt;
+  --bind=/tmp/.X11-unix:/tmp/.X11-unix &lt;span style=&#34;font-weight: bold; font-style: italic&#34;&gt;\&lt;/span&gt;
+  --bind /run/user/1000/pulse:/run/pulse &lt;span style=&#34;font-weight: bold; font-style: italic&#34;&gt;\&lt;/span&gt;
+  --bind /var/lib/dbus:/var/lib/dbus &lt;span style=&#34;font-weight: bold; font-style: italic&#34;&gt;\&lt;/span&gt;
+  -u spotify -D spotify/ &lt;span style=&#34;font-weight: bold; font-style: italic&#34;&gt;\&lt;/span&gt;
+  spotify
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h3 id=&#34;things-to-note&#34;&gt;Things to note:&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;We haven&amp;rsquo;t used any layered filesystem and the container is actually writing into the &lt;code&gt;spotify&lt;/code&gt; directory.&lt;/li&gt;
+&lt;li&gt;The network stack is not isolated&lt;/li&gt;
+&lt;li&gt;The &lt;strong&gt;1000&lt;/strong&gt; user id needs to be changed with the id of the user connected to the X session (your user id on that machine)&lt;/li&gt;
+&lt;li&gt;I&amp;rsquo;m not mounting &lt;code&gt;$HOME/.spotify&lt;/code&gt; things inside my &lt;code&gt;systemd-nspawn&lt;/code&gt; container since I decided to keep the state in the &lt;code&gt;spotify&lt;/code&gt; directory&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;machinectl&#34;&gt;machinectl&lt;/h1&gt;
+
+&lt;p&gt;There&amp;rsquo;s another tool, invokable via &lt;code&gt;machinectl&lt;/code&gt; which allows you to manage your &amp;ldquo;machines&amp;rdquo; aka containers and vms managed
+by the &lt;a href=&#34;https://wiki.freedesktop.org/www/Software/systemd/machined/&#34;&gt;&lt;strong&gt;systemd machine manager&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;container-services&#34;&gt;Container services&lt;/h4&gt;
+
+&lt;p&gt;Using machinectl you can even create startup services, for example I use this for the NetworkManagr (image not included)&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #ffffff&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;font-style: italic&#34;&gt;# machinectl enable network-manager&lt;/span&gt;
+
+Created symlink from /etc/systemd/system/machines.target.wants/systemd-nspawn@network-manager.service to /usr/lib/systemd/system/systemd-nspawn@.service.
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h4 id=&#34;management&#34;&gt;Management&lt;/h4&gt;
+
+&lt;p&gt;machinectl allows you to list, terminate and show the status of machines.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #ffffff&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;font-style: italic&#34;&gt;# machinectl list&lt;/span&gt;
+
+
+MACHINE CLASS     SERVICE
+spotify container nspawn 
+
+1 machines listed.
+&lt;/pre&gt;&lt;/div&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #ffffff&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;font-style: italic&#34;&gt;# machinectl terminate spotify&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;div class=&#34;highlight&#34; style=&#34;background: #ffffff&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span style=&#34;font-style: italic&#34;&gt;# machinectl status spotify&lt;/span&gt;
+
+spotify
+           Since: Mon 2016-11-14 02:13:54 CET; 7s ago
+          Leader: 11308 (spotify)
+         Service: nspawn; class container
+            Root: /var/lib/machines/spotify
+              OS: Debian GNU/Linux 8 (jessie)
+            Unit: machine-spotify.scope
+                  ├─11308 /usr/share/spotify/spotif
+                  ├─11321 /usr/share/spotify/spotify --type=zygote --no-sandbox --lang=en-US --log-file=/usr/share/spotify/debug.log --log-severity=disable --product-version=Spotify/1.0.42.151
+                  ├─11344 /proc/self/exe --type=gpu-process --channel=1.0.1413324922 --mojo-application-channel-token=7BA7725BB9581D934FDAECBCAC0E2C8B --no-sandbox --window-depth=24 --x11-visual-id=32 --lang=en-
+                  └─11372 /usr/share/spotify/spotify --type=renderer --disable-pinch --no-sandbox --primordial-pipe-token=431AFC3F7268B33A8765213F7926A54A --lang=en-US --lang=en-US --log-file=/usr/share/spotify/
+
+Nov 14 02:13:54 fntlnz systemd[1]: Started Container spotify.
+Nov 14 02:13:54 fntlnz systemd[1]: Starting Container spotify.
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h4 id=&#34;pull-images&#34;&gt;Pull images&lt;/h4&gt;
+
+&lt;p&gt;machinectl can pull images using &lt;code&gt;pull-raw&lt;/code&gt;, &lt;code&gt;pull-tar&lt;/code&gt; and &lt;code&gt;pull-dkr&lt;/code&gt; from remote urls.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# machinectl pull-raw --verify=no http://ftp.halifax.rwth-aachen.de/fedora/linux/releases/21/Cloud/Images/x86_64/Fedora-Cloud-Base-20141203-21.x86_64.raw.xz
+# systemd-nspawn -M Fedora-Cloud-Base-20141203-21
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;for more, see &lt;a href=&#34;https://www.freedesktop.org/software/systemd/man/machinectl.html&#34;&gt;machinectl&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;what-s-next&#34;&gt;What&amp;rsquo;s next&lt;/h2&gt;
+
+&lt;p&gt;In this post I showed you something like the top 1% of the things that can be done with &lt;code&gt;systemd-nspawn&lt;/code&gt;, there&amp;rsquo;s &lt;strong&gt;moar!!&lt;/strong&gt;, like:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Usage of btrfs as container root and ephemeral containers&lt;/li&gt;
+&lt;li&gt;Network isolation and advanced network interfaces (macvlan, ipvlan)&lt;/li&gt;
+&lt;li&gt;Integration with SELinux&lt;/li&gt;
+&lt;li&gt;bootable images&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;see &lt;code&gt;man machinectl&lt;/code&gt; and &lt;code&gt;man systemd-nspawn&lt;/code&gt; for more&lt;/p&gt;
+
+&lt;h1 id=&#34;what-i-achieved&#34;&gt;What I achieved ?&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Portability and zero setup time&lt;/strong&gt;: most linux distributions today are using systemd that means that my containers will work without having to install anything&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Faster startup times&lt;/strong&gt;: as I said, starting just a process is faster than setting up a Docker container, not because Docker is slow (it&amp;rsquo;s not) but because it does actually more than just starting the process&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Reuse&lt;/strong&gt;: I can reuse any docker image I want just by exporting it to a tar file, I can even reuse virtual machine images.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Now let&amp;rsquo;s listen at some music!&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://blog.fntlnz.wtf/systemd-nspawn/video.gif&#34; alt=&#34;systemd nspawn spotify&#34; /&gt;&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Why do we have containers</title>
       <link>http://blog.fntlnz.wtf/post/why-containers/</link>
-      <pubDate>Thu, 11 Aug 2016 15:35:53 +0200</pubDate>
-      
+      <pubDate>Thu, 11 Aug 2016 15:35:53 CEST</pubDate>
+      <author>Lorenzo Fontana</author>
       <guid>http://blog.fntlnz.wtf/post/why-containers/</guid>
       <description>
 
-&lt;h2 id=&#34;disclaimer&#34;&gt;Disclaimer&lt;/h2&gt;
+&lt;h1 id=&#34;disclaimer&#34;&gt;Disclaimer&lt;/h1&gt;
 
 &lt;p&gt;This post reflects my own view of the whole world of virtualization, I summed up here my thoughts but please
-if you find something that you consider wrong or inexact leave a comment so I can learn by you and improve myself. 🤘🏼&lt;/p&gt;
+if you find something that you consider wrong or inexact leave a comment so I can learn by you and improve myself.&lt;/p&gt;
 
-&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+&lt;h1 id=&#34;introduction&#34;&gt;Introduction&lt;/h1&gt;
 
 &lt;p&gt;As part of my work at &lt;a href=&#34;http://www.kiratech.it/&#34;&gt;Kiratech&lt;/a&gt; I evangelize people about &lt;a href=&#34;https://en.wikipedia.org/wiki/Operating-system-level_virtualization&#34;&gt;OS level Virtualization&lt;/a&gt;
 and, while talking about Linux Containers, Docker Containers or more in general about the &lt;strong&gt;concept of containers itself&lt;/strong&gt; I often (as it should be) encounter doubts and questions like:&lt;/p&gt;
@@ -42,7 +256,7 @@ and, while talking about Linux Containers, Docker Containers or more in general 
 &lt;p&gt;In this post I want to try to explain why, in my opinion, &lt;strong&gt;OS Level Virtualization&lt;/strong&gt; (aka. containers) is a thing that matters now
 primarily by analyzing the details of each virtualization method.&lt;/p&gt;
 
-&lt;h2 id=&#34;different-types-of-virtualization&#34;&gt;Different types of virtualization&lt;/h2&gt;
+&lt;h1 id=&#34;different-types-of-virtualization&#34;&gt;Different types of virtualization&lt;/h1&gt;
 
 &lt;p&gt;At the moment there are three main distinct types of Virtualization, namely:&lt;/p&gt;
 
@@ -78,7 +292,7 @@ but comes with a larger surface for possible attackers due to the syscalls, shar
 solved in most used OS-Level virtualization platforms such as Docker, in fact Docker Containers for example are fully integrated with cgroups, seccomp, SELinux, and all the possible resources
 are isolated properly using Kernel namespaces, also you can manually add or drop capabilities.&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Portability&lt;/strong&gt;: Full virtualization and paravirtualization both leverages on specific hardware, because of its nature requires more resources than
-OS-Level virtualization which can be used anywhere a modern Linux kernel is present.&lt;/li&gt;
+OS-Level virtuanchorlinenosalization which can be used anywhere a modern Linux kernel is present.&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Speed&lt;/strong&gt;: The fact that OS-Level virtualization works in a shared kernel architecture offers super fast startup times, this is not true for other types of virtualization
 where starting a new system is a lot more than just spawning a new process as it is with containers.&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;Application Portability&lt;/strong&gt;: as because containers can be moved easily due to their decreased size due to the fact that they don&amp;rsquo;t own an entire operating system and a kernel
@@ -96,12 +310,10 @@ other hand does not have an official implementation for this&lt;/li&gt;
 But if at some extent your motivation consist in &lt;strong&gt;decreasing costs&lt;/strong&gt; related to full virtualization overheads
 while &lt;strong&gt;allowing developers to ship, develop and test code faster&lt;/strong&gt; we already found two.&lt;/p&gt;
 
-&lt;h2 id=&#34;in-the-end-why-containers-are-actually-there&#34;&gt;In the end, why containers are actually there?&lt;/h2&gt;
+&lt;h1 id=&#34;in-the-end-why-containers-are-actually-there&#34;&gt;In the end, why containers are actually there?&lt;/h1&gt;
 
 &lt;p&gt;If you&amp;rsquo;v read up to here you probably think I missed the point, instead what I wanted to write is exactly that
 OS-Level virtualization (aka containers) is just another way of doing virtualization which solves specific needs that are not solved by others:&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;If you need a recap, here you go:&lt;/strong&gt;&lt;/p&gt;
 
 &lt;p&gt;We need containers for being able to work closer to the kernel while executing in a fully isolated environment.
 This specific thing allows us to achieve &lt;strong&gt;higher densities&lt;/strong&gt; and run more workload within the same hardware while
