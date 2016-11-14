@@ -1,5 +1,5 @@
 name = "fntlnz"
 description = "fntlnz blog theme"
 PygmentsCodeFences = true
-PygmentsOptions = "linenos=table"
-PygmentsStyle = "borland"
+PygmentsOptions = ""
+PygmentsStyle = "bw"
