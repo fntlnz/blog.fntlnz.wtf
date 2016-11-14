@@ -227,6 +227,6 @@ see `man machinectl` and `man systemd-nspawn` for more
 - **Reuse**: I can reuse any docker image I want just by exporting it to a tar file, I can even reuse virtual machine images.
 
 
-Now let's listen at some music!
+Now let's listen some music!
 
 ![systemd nspawn spotify](/systemd-nspawn/video.gif)

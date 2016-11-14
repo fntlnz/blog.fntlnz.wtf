@@ -217,7 +217,7 @@ Nov 14 02:13:54 fntlnz systemd[1]: Starting Container spotify.
 &lt;li&gt;&lt;strong&gt;Reuse&lt;/strong&gt;: I can reuse any docker image I want just by exporting it to a tar file, I can even reuse virtual machine images.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;Now let&amp;rsquo;s listen at some music!&lt;/p&gt;
+&lt;p&gt;Now let&amp;rsquo;s listen some music!&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&#34;http://blog.fntlnz.wtf/systemd-nspawn/video.gif&#34; alt=&#34;systemd nspawn spotify&#34; /&gt;&lt;/p&gt;
 </description>
