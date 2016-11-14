@@ -1,5 +1,5 @@
 +++
-date        = "2016-11-11T01:38:22+02:00"
+date        = "2016-11-14T10:00:22+02:00"
 title       = "Using systemd-nspawn for some containerization needs"
 description = "Personal considerations on the usage of systemd-nspawn for desktop applications and system services"
 tags        = [ "containers", "systemd", "systemd-nspawn" ]

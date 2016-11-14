@@ -5,12 +5,12 @@
     <link>http://blog.fntlnz.wtf/</link>
     <language>en-US</language>
     <author>Lorenzo Fontana</author>
-    <updated>Fri, 11 Nov 2016 01:38:22 &#43;0200</updated>
+    <updated>Mon, 14 Nov 2016 10:00:22 &#43;0200</updated>
     
     <item>
       <title>Using systemd-nspawn for some containerization needs</title>
       <link>http://blog.fntlnz.wtf/post/systemd-nspawn/</link>
-      <pubDate>Fri, 11 Nov 2016 01:38:22 &#43;0200</pubDate>
+      <pubDate>Mon, 14 Nov 2016 10:00:22 &#43;0200</pubDate>
       <author>Lorenzo Fontana</author>
       <guid>http://blog.fntlnz.wtf/post/systemd-nspawn/</guid>
       <description>
